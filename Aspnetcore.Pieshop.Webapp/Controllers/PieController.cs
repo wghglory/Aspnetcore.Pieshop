@@ -1,4 +1,6 @@
-﻿using Aspnetcore.Pieshop.Webapp.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Aspnetcore.Pieshop.Webapp.Models;
 using Aspnetcore.Pieshop.Webapp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +18,7 @@ namespace Aspnetcore.Pieshop.Webapp.Controllers
             _categoryRepository = categoryRepository;
         }
 
-        public ViewResult List()
+/*        public ViewResult List()
         {
             PieListViewModel pieListViewModel = new PieListViewModel
             {
@@ -25,7 +27,40 @@ namespace Aspnetcore.Pieshop.Webapp.Controllers
             };
 
             return View(pieListViewModel);
+        }*/
+
+        public ViewResult List(string category)
+        {
+            IEnumerable<Pie> pies;
+            string currentCategory;
+
+            if (string.IsNullOrEmpty(category))
+            {
+                pies = _pieRepository.Pies.OrderBy(p => p.Id);
+                currentCategory = "All pies";
+            }
+            else
+            {
+                pies = _pieRepository.Pies.Where(p => p.Category.CategoryName == category)
+                    .OrderBy(p => p.Id);
+                currentCategory = _categoryRepository.Categories.FirstOrDefault(c => c.CategoryName == category)
+                    ?.CategoryName;
+            }
+
+            return View(new PieListViewModel
+            {
+                Pies = pies,
+                CurrentCategory = currentCategory
+            });
         }
-        
+
+        public IActionResult Details(int id)
+        {
+            var pie = _pieRepository.GetPieById(id);
+            if (pie == null)
+                return NotFound();
+
+            return View(pie);
+        }
     }
 }

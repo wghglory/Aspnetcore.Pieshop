@@ -38,6 +38,9 @@ namespace Aspnetcore.Pieshop.Webapp
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 //            services.AddScoped<ShoppingCart>(sp => ShoppingCart.GetCart(sp));
             services.AddScoped<ShoppingCart>(ShoppingCart.GetCart);
+            
+            services.AddTransient<IOrderRepository, OrderRepository>();
+
 
             services.AddMvc();
 

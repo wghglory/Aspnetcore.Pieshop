@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using Aspnetcore.Pieshop.Webapp.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,7 +40,7 @@ namespace Aspnetcore.Pieshop.Webapp
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 //            services.AddScoped<ShoppingCart>(sp => ShoppingCart.GetCart(sp));
             services.AddScoped<ShoppingCart>(ShoppingCart.GetCart);
-            
+
             services.AddTransient<IOrderRepository, OrderRepository>();
 
 
@@ -78,9 +80,17 @@ namespace Aspnetcore.Pieshop.Webapp
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
+                    name: "detail",
+                    template: "Pie/Details/{id}",
+                    defaults: new {Controller = "Pie", action = "Details"},
+                    constraints: new {id = new IntRouteConstraint()}
+                );
+
+                routes.MapRoute(
                     name: "categoryfilter",
                     template: "Pie/{action}/{category?}",
-                    defaults: new {Controller = "Pie", action = "List"});
+                    defaults: new {Controller = "Pie", action = "List"}
+                );
 
                 routes.MapRoute(
                     name: "default",

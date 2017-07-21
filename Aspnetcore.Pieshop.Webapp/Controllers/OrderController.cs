@@ -1,4 +1,5 @@
 ﻿using Aspnetcore.Pieshop.Webapp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Aspnetcore.Pieshop.Webapp.Controllers
@@ -14,12 +15,14 @@ namespace Aspnetcore.Pieshop.Webapp.Controllers
             _shoppingCart = shoppingCart;
         }
 
+        [Authorize]
         public IActionResult Checkout()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Checkout(Order order)
         {
             var items = _shoppingCart.GetShoppingCartItems();
@@ -41,7 +44,8 @@ namespace Aspnetcore.Pieshop.Webapp.Controllers
 
         public IActionResult CheckoutComplete()
         {
-            ViewBag.CheckoutCompleteMessage = $"{HttpContext.User.Identity.Name}, thanks for your order. You'll soon enjoy our delicious pies!";
+            ViewBag.CheckoutCompleteMessage =
+                $"{HttpContext.User.Identity.Name}, thanks for your order. You'll soon enjoy our delicious pies!";
             return View();
         }
     }

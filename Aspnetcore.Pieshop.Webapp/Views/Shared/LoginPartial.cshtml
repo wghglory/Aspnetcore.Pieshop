@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore
+
+@inject SignInManager<IdentityUser> SignInManager
+
+@if (SignInManager.IsSignedIn(User))  //User.Identity.IsAuthenticated
+{
+    <form asp-controller="Account" asp-action="Logout" asp-antiforgery="true" method="post" class="navbar-right" id="logoutForm">
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Hello, @User.Identity.Name</a></li>
+            <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+        </ul>
+    </form>
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li><a id="registerLink" asp-controller="Account" asp-action="Register">Register</a></li>
+        <li><a id="loginLink" asp-controller="Account" asp-action="Login">Log in</a></li>
+    </ul>
+}

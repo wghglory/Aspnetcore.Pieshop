@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Threading.Tasks;
-using Aspnetcore.Pieshop.Webapp.Models;
+﻿using Aspnetcore.Pieshop.Webapp.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -52,6 +48,16 @@ namespace Aspnetcore.Pieshop.Webapp
 
             services.AddDbContext<AppDbContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("MysqlConnection")));
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+//                options.User.RequireUniqueEmail = true;
+            });
+            
+            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,6 +81,8 @@ namespace Aspnetcore.Pieshop.Webapp
 
 
             app.UseSession(); // Microsoft.AspNetCore.Session
+
+            app.UseIdentity();
 
             //app.UseMvcWithDefaultRoute();
             app.UseMvc(routes =>

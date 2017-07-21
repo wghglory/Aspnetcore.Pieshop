@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Aspnetcore.Pieshop.Webapp.Models;
+﻿using Aspnetcore.Pieshop.Webapp.Models;
 using Aspnetcore.Pieshop.Webapp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,28 +7,20 @@ namespace Aspnetcore.Pieshop.Webapp.Controllers
     public class HomeController : Controller
     {
         private readonly IPieRepository _pieRepository;
-        private readonly IPieRepository _categoryRepository;
 
-        public HomeController(IPieRepository pieRepository, ICategoryRepository categoryRepository)
+        public HomeController(IPieRepository pieRepository)
         {
             _pieRepository = pieRepository;
-            _categoryRepository = pieRepository;
         }
 
-        public IActionResult Index()
+        public ViewResult Index()
         {
-            PieListViewModel pieListViewModel = new PieListViewModel
+            var homeViewModel = new HomeViewModel
             {
-                Pies = _pieRepository.Pies,
-                CurrentCategory = "Cheese cakes"
+                PiesOfTheWeek = _pieRepository.PiesOfTheWeek
             };
 
-            return View(pieListViewModel);
-        }
-
-        public IActionResult Error()
-        {
-            return View();
+            return View(homeViewModel);
         }
     }
 }

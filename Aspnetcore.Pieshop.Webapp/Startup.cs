@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Aspnetcore.Pieshop.Webapp.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,7 +35,15 @@ namespace Aspnetcore.Pieshop.Webapp
             services.AddTransient<ICategoryRepository, CategoryRepository>();
             services.AddTransient<IPieRepository, PieRepository>();
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+//            services.AddScoped<ShoppingCart>(sp => ShoppingCart.GetCart(sp));
+            services.AddScoped<ShoppingCart>(ShoppingCart.GetCart);
+
             services.AddMvc();
+
+
+            services.AddMemoryCache();
+            services.AddSession(); // Microsoft.AspNetCore.Session
 
             services.AddDbContext<AppDbContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("MysqlConnection")));
@@ -59,13 +68,16 @@ namespace Aspnetcore.Pieshop.Webapp
             app.UseStatusCodePages();
             app.UseStaticFiles();
 
+
+            app.UseSession(); // Microsoft.AspNetCore.Session
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
-            
+
             DbInitializer.Seed(app);
         }
     }

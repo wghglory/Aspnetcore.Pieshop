@@ -73,7 +73,7 @@ namespace Aspnetcore.Pieshop.Webapp
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error/Index");
             }
 
             app.UseStatusCodePages();
